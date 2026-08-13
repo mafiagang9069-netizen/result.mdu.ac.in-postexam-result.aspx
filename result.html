@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Result</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(to bottom, #5fc0e5 0%, #a8d8f5 100%);
+    color: #222;
+}
+
+/* MAIN PAGE */
+.page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 18px 6px 0 6px;
+}
+
+/* RESULT TITLE */
+.title {
+    margin-left: 342px;
+    color: #0876aa;
+    font-size: 25px;
+    font-weight: bold;
+    text-shadow: 1px 1px rgba(255,255,255,.4);
+    margin-bottom: 5px;
+}
+
+/* TWO COLUMN LAYOUT */
+.layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+/* LEFT RESULT PANEL */
+.result-panel {
+    width: 330px;
+    height: 645px;
+    background: #f4f4dc;
+    border: 1px solid #999;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.result-panel::-webkit-scrollbar {
+    width: 13px;
+}
+
+.result-panel::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 8px;
+}
+
+.result-header {
+    display: grid;
+    grid-template-columns: 55px 1fr;
+    height: 19px;
+    background: #777;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.result-header div {
+    padding-left: 4px;
+    border-right: 1px solid white;
+}
+
+/* CLICKABLE RESULT */
+.result-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    min-height: 43px;
+    border-bottom: 1px solid #999;
+    cursor: pointer;
+    background: #f5f5df;
+    transition: background .12s;
+}
+
+.result-item:hover {
+    background: #fffbd0;
+}
+
+.result-item.selected {
+    background: #dcecff;
+}
+
+.sr {
+    padding-top: 5px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.result-text {
+    padding: 4px 4px;
+    border-left: 1px solid #999;
+    font-size: 14px;
+    line-height: 16px;
+}
+
+/* RIGHT SIDE */
+.main {
+    width: 700px;
+}
+
+.form-title {
+    color: #0876aa;
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* YELLOW FORM */
+.form-box {
+    width: 700px;
+    min-height: 74px;
+    background: #ffffcc;
+    border: 1px solid #eeeecc;
+    padding: 7px 10px 10px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    height: 30px;
+}
+
+label {
+    color: #555;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.reg-input {
+    width: 82px;
+    height: 29px;
+    margin-left: 45px;
+    border: 1px solid #bbb;
+    background: white;
+}
+
+.roll-label {
+    margin-left: 166px;
+}
+
+.roll-input {
+    width: 82px;
+    height: 29px;
+    margin-left: 45px;
+    border: 1px solid #bbb;
+    background: white;
+}
+
+/* PROCEED BUTTON */
+.proceed {
+    float: right;
+    margin-top: 6px;
+    border: 1px solid #a78d38;
+    border-radius: 2px;
+    background: linear-gradient(#f9d56d, #e4a92e);
+    color: #604800;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 11px;
+    cursor: pointer;
+}
+
+.proceed:hover {
+    background: linear-gradient(#ffe38b, #edb83c);
+}
+
+.proceed:active {
+    transform: translateY(1px);
+}
+
+/* WARNING */
+.warning {
+    margin-top: 13px;
+    color: #934817;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* INSTRUCTIONS */
+.instructions {
+    margin-top: 45px;
+    color: #934817;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.instructions p {
+    margin: 7px 0 0 8px;
+    color: #444;
+    font-weight: normal;
+}
+
+/* PRANK OVERLAY */
+.overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0,0,0,.72);
+    align-items: center;
+    justify-content: center;
+}
+
+.popup {
+    width: 550px;
+    max-width: 90%;
+    padding: 35px;
+    background: white;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(255,255,255,.35);
+    animation: popup .3s ease-out;
+}
+
+@keyframes popup {
+    from {
+        transform: scale(.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.popup h1 {
+    margin: 0 0 12px;
+    font-size: 36px;
+}
+
+.popup p {
+    font-size: 21px;
+    line-height: 1.5;
+    font-weight: bold;
+}
+
+.emojis {
+    font-size: 36px;
+    margin: 15px 0;
+}
+
+.close-btn {
+    border: 0;
+    border-radius: 8px;
+    background: #222;
+    color: white;
+    padding: 10px 25px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: #444;
+}
+
+/* SMALL SCREENS */
+@media(max-width: 800px) {
+
+    .page {
+        padding: 10px;
+    }
+
+    .title {
+        margin-left: 0;
+    }
+
+    .layout {
+        flex-direction: column;
+    }
+
+    .result-panel,
+    .main,
+    .form-box {
+        width: 100%;
+    }
+
+    .result-panel {
+        height: 350px;
+    }
+
+    .form-row {
+        flex-wrap: wrap;
+        height: auto;
+        gap: 7px;
+    }
+
+    .reg-input,
+    .roll-input {
+        margin-left: 5px;
+    }
+
+    .roll-label {
+        margin-left: 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+    
+
+    <div class="layout">
+
+        <!-- LEFT SIDE -->
+        <div class="result-panel">
+
+            <div class="result-header">
+                <div>SrNo</div>
+                <div>Result Declared</div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">1</div>
+                <div class="result-text">
+                    B.TECH (COMPUTER SCIENCE & ENGINEERING)
+                    SEM/YR: 04, 06 : 12-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">2</div>
+                <div class="result-text">
+                    MASTER OF ARTS (ECONOMIC HONS 5-YEAR)
+                    Semester SEM/YR : 10 : 12-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">3</div>
+                <div class="result-text">
+                    L.L.B (HONS) 3 YEAR SEM/YR :
+                    02, 04, 05 : 11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">4</div>
+                <div class="result-text">
+                    B.B.A.L.L.B.(HONS) 5 YEAR COURSE
+                    SEM/YR : 02, 04, 06, 08, 09 :
+                    11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">5</div>
+                <div class="result-text">
+                    MBA (EXECUTIVE) EVEN : SEM/YR :
+                    04 : 11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">6</div>
+                <div class="result-text">
+                    MBA FOR WORKING PROFESSIONAL :
+                    SEM/YR : 02, 04 : 11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">7</div>
+                <div class="result-text">
+                    MBA BUSINESS PSYCHOLOGY :
+                    SEM/YR : 02, 04 : 11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">8</div>
+                <div class="result-text">
+                    MBA (ARTIFICIAL INTELLIGENCE & DATA SCIENCE) :
+                    SEM/YR : 02 : 11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">9</div>
+                <div class="result-text">
+                    MBA : SEM/YR : 02, 03, 04 :
+                    11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">10</div>
+                <div class="result-text">
+                    MASTER OF ARTS (PSYCHOLOGY) :
+                    SEM/YR : 03 : 11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">11</div>
+                <div class="result-text">
+                    MASTER OF ARTS (POLITICAL SCIENCE) :
+                    SEM/YR : 02 : 11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">12</div>
+                <div class="result-text">
+                    MASTER OF ARTS (HISTORY) :
+                    SEM/YR : 03, 04 : 11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">13</div>
+                <div class="result-text">
+                    M.A. (GUIDANCE AND COUNSELLING) :
+                    SEM/YR : 02 : 11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">14</div>
+                <div class="result-text">
+                    MBA 5-YEAR INTEGRATED :
+                    SEM/YR : 05, 06 : 11-AUG-2026
+                </div>
+            </div>
+
+            <div class="result-item">
+                <div class="sr">15</div>
+                <div class="result-text">
+                    MASTER OF SCIENCE MATHEMATICS (HONS)
+                    5 YEAR Semester SEM/YR : 08 :
+                    11-AUG-2026
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <div class="main">
+
+            <div class="form-title">Result</div>
+
+            <div class="form-box">
+
+                <form id="resultForm">
+
+                    <div class="form-row">
+
+                        <label>Registration No:</label>
+
+                        <input
+                            class="reg-input"
+                            id="registration"
+                            type="text"
+                        >
+
+                        <label class="roll-label">
+                            Roll No:
+                        </label>
+
+                        <input
+                            class="roll-input"
+                            id="roll"
+                            type="text"
+                        >
+
+                    </div>
+
+                    <button
+                        class="proceed"
+                        type="submit"
+                    >
+                        🔎 Proceed Now
+                    </button>
+
+                </form>
+
+            </div>
+
+            <div class="warning">
+                **The Results displayed here subject to updation/correction.
+                The final result will on DMC.
+            </div>
+
+            <div class="instructions">
+                Instructions:
+
+                <p>
+                    1:- Enter your complete "Registration No"
+                    and "Roll Number" for searching.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- PRANK POPUP -->
+<div class="overlay" id="overlay">
+
+    <div class="popup">
+
+        <h1>😂😂 GOTCHA! 😂😂</h1>
+
+        <p>
+            🤣🤣🤣 It's a prank bro! 🤣🤣🤣
+            <br><br>
+            Your result is <b>NOT LIVE YET!</b> 😭😂
+            <br><br>
+            💀 You really thought your result was out? 💀
+        </p>
+
+        <div class="emojis">
+            😂 🤣 😭 😂 🤣 😭 😂
+        </div>
+
+        <button
+            class="close-btn"
+            onclick="closePopup()"
+        >
+            Okay bro 😭
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* MAKE ALL RESULT ENTRIES CLICKABLE */
+
+const resultItems =
+    document.querySelectorAll(".result-item");
+
+resultItems.forEach(function(item) {
+
+    item.addEventListener("click", function() {
+
+        /* Remove previous selection */
+        resultItems.forEach(function(other) {
+            other.classList.remove("selected");
+        });
+
+        /* Select clicked result */
+        item.classList.add("selected");
+
+        /* Automatically scroll the clicked item into view */
+        item.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+
+    });
+
+});
+
+
+/* PROCEED BUTTON */
+
+document
+.getElementById("resultForm")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const registration =
+        document.getElementById("registration").value.trim();
+
+    const roll =
+        document.getElementById("roll").value.trim();
+
+    /* Require both fields */
+    if (registration === "" || roll === "") {
+
+        alert(
+            "Please enter Registration No. and Roll No."
+        );
+
+        return;
+    }
+
+    /* Show prank */
+    document.getElementById("overlay").style.display = "flex";
+
+});
+
+
+/* CLOSE POPUP */
+
+function closePopup() {
+
+    document.getElementById("overlay").style.display = "none";
+
+}
+
+
+/* Clicking outside popup closes it */
+
+document
+.getElementById("overlay")
+.addEventListener("click", function(event) {
+
+    if (event.target === this) {
+        closePopup();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
